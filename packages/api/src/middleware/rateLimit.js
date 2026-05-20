@@ -1,0 +1,24 @@
+import rateLimit from 'express-rate-limit'
+
+const limitResponse = (message) => ({
+  success: false,
+  error: { code: 'RATE_LIMITED', message }
+})
+
+// Limite générale : 100 requêtes / minute / IP.
+export const generalLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: limitResponse('Trop de requêtes, réessayez dans une minute')
+})
+
+// Limite stricte sur l'authentification : 10 tentatives / 15 minutes / IP.
+export const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: limitResponse('Trop de tentatives de connexion, réessayez plus tard')
+})

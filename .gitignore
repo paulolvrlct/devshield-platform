@@ -1,0 +1,39 @@
+# Secrets & environnement
+.env
+.env.*
+!.env.example
+
+# Outils internes — ne jamais publier
+CLAUDE.md
+.claude/
+
+# Dépendances
+node_modules/
+packages/*/node_modules/
+
+# Build
+packages/frontend/dist/
+packages/api/dist/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Données Docker (volumes montés en bind si besoin)
+postgres-data/
+caddy-data/
+caddy-config/
+
+# Sauvegardes & uploads
+backups/*.sql
+backups/*.tar.gz
+uploads/
+
+# Base GeoIP
+*.mmdb
+
+# Système / éditeurs
+.DS_Store
+.vscode/
+.idea/

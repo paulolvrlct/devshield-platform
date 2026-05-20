@@ -1,0 +1,13 @@
+# Caddyfile — développement local (HTTP, pas de Let's Encrypt)
+# La configuration de production (sous-domaines + HTTPS auto) sera ajoutée au déploiement.
+clients.devshield.fr {
+	encode gzip
+
+	handle /api/* {
+		reverse_proxy api:3000
+	}
+
+	handle {
+		reverse_proxy frontend:5173
+	}
+}
