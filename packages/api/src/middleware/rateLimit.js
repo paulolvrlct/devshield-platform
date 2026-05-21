@@ -22,3 +22,12 @@ export const authLimiter = rateLimit({
   legacyHeaders: false,
   message: limitResponse('Trop de tentatives de connexion, réessayez plus tard')
 })
+
+// Limite stricte sur les scans OWASP : 10 scans / minute / IP.
+export const scanLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: Number(process.env.SCAN_RATE_LIMIT) || 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: limitResponse('Trop de scans, réessayez dans une minute')
+})

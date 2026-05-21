@@ -8,6 +8,7 @@ import OnboardingForm from './pages/Onboarding/index.jsx'
 import Submissions from './pages/Onboarding/Submissions.jsx'
 import ClientsPage from './pages/Clients/index.jsx'
 import InvoicesPage from './pages/Invoices/index.jsx'
+import AuditPage from './pages/Audit/index.jsx'
 
 export default function App() {
   return (
@@ -52,6 +53,16 @@ export default function App() {
           <ProtectedRoute>
             <Layout>
               <InvoicesPage />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/audits"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <AuditPage />
             </Layout>
           </ProtectedRoute>
         }

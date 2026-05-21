@@ -12,6 +12,7 @@ import onboardingRouter from './routes/onboarding.js'
 import clientsRouter from './routes/clients.js'
 import invoicesRouter from './routes/invoices.js'
 import dashboardRouter from './routes/dashboard.js'
+import auditsRouter from './routes/audits.js'
 import { runAllChecks } from './services/monitor.js'
 
 const app = express()
@@ -43,6 +44,7 @@ app.use('/api/v1/onboarding', onboardingRouter)
 app.use('/api/v1/clients', clientsRouter)
 app.use('/api/v1/invoices', invoicesRouter)
 app.use('/api/v1/dashboard', dashboardRouter)
+app.use('/api/v1/audits', auditsRouter)
 
 app.use(notFound)
 app.use(errorHandler)

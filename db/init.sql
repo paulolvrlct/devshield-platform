@@ -134,6 +134,24 @@ CREATE TABLE IF NOT EXISTS clients.interventions (
 
 CREATE INDEX IF NOT EXISTS idx_interventions_client ON clients.interventions (client_id);
 
+-- Résultats des scans OWASP (schéma audits)
+CREATE TABLE IF NOT EXISTS audits.scans (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id UUID REFERENCES clients.clients(id) ON DELETE SET NULL,
+  url VARCHAR(500) NOT NULL,
+  hostname VARCHAR(255) NOT NULL,
+  grade CHAR(1) NOT NULL,
+  score INTEGER NOT NULL,
+  duration_ms INTEGER,
+  technologies TEXT DEFAULT '[]',
+  checks TEXT DEFAULT '[]',
+  summary TEXT DEFAULT '{}',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_scans_client ON audits.scans (client_id);
+CREATE INDEX IF NOT EXISTS idx_scans_created ON audits.scans (created_at DESC);
+
 -- Lien entre un client et son user account (schéma clients)
 CREATE TABLE IF NOT EXISTS clients.client_users (
   client_id UUID NOT NULL REFERENCES clients.clients(id) ON DELETE CASCADE,
