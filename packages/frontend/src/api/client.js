@@ -25,5 +25,6 @@ const request = async (path, options = {}, retry = true) => {
 
 export const api = {
   get: (path) => request(path, { method: 'GET' }),
-  post: (path, data) => request(path, { method: 'POST', body: JSON.stringify(data ?? {}) })
+  post: (path, data) => request(path, { method: 'POST', body: JSON.stringify(data ?? {}) }),
+  patch: (path, data) => request(path, { method: 'PATCH', body: JSON.stringify(data ?? {}) })
 }
