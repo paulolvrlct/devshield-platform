@@ -22,11 +22,11 @@ const eventLabels = {
 }
 
 const eventColors = {
-  'cowrie.login.failed': 'bg-red-500/20 text-red-400',
-  'cowrie.login.success': 'bg-green-500/20 text-green-400',
-  'cowrie.command.input': 'bg-cyan/20 text-cyan',
-  'cowrie.session.connect': 'bg-blue-500/20 text-blue-400',
-  'cowrie.session.closed': 'bg-gray-500/20 text-gray-400'
+  'cowrie.login.failed': 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400',
+  'cowrie.login.success': 'bg-emerald-100 text-emerald-700 dark:bg-green-500/20 dark:text-green-400',
+  'cowrie.command.input': 'bg-brand-100 text-brand-700 dark:bg-brand-500/20 dark:text-brand-400',
+  'cowrie.session.connect': 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400',
+  'cowrie.session.closed': 'bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-400'
 }
 
 export default function HoneypotPage() {
@@ -81,15 +81,15 @@ export default function HoneypotPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Honeypot SSH</h1>
-          <p className="text-sm text-text-secondary">
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Honeypot SSH</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Surveillance des attaques SSH en temps réel via Cowrie.
           </p>
         </div>
         <select
           value={hours}
           onChange={(e) => setHours(Number(e.target.value))}
-          className="rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm focus:border-cyan focus:outline-none"
+          className="glass-input rounded-xl px-3 py-2 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-brand-500/40 focus:outline-none"
         >
           <option value={1}>1 heure</option>
           <option value={6}>6 heures</option>
@@ -100,7 +100,7 @@ export default function HoneypotPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-white/10">
+      <div className="flex gap-1 border-b border-slate-200 dark:border-white/10">
         {[
           { key: 'stats', label: 'Statistiques' },
           { key: 'map', label: 'Carte' },
@@ -109,10 +109,10 @@ export default function HoneypotPage() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-4 py-2 text-sm border-b-2 transition-colors ${
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-all ${
               tab === t.key
-                ? 'border-cyan text-cyan'
-                : 'border-transparent text-text-secondary hover:text-text-primary'
+                ? 'border-brand-500 text-brand-600 dark:text-brand-400'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             }`}
           >
             {t.label}
@@ -121,7 +121,7 @@ export default function HoneypotPage() {
       </div>
 
       {loading ? (
-        <p className="text-text-secondary">Chargement…</p>
+        <p className="text-slate-500 dark:text-slate-400">Chargement…</p>
       ) : (
         <>
           {tab === 'stats' && <StatsTab stats={stats} />}
@@ -135,40 +135,38 @@ export default function HoneypotPage() {
 
 // ─── Stats Tab ───────────────────────────────────────────────────
 function StatsTab({ stats }) {
-  if (!stats) return <p className="text-text-secondary">Aucune donnée.</p>
+  if (!stats) return <p className="text-slate-500 dark:text-slate-400">Aucune donnée.</p>
 
   const { summary, topPasswords, topUsernames, topCommands, topCountries, topIps, perDay } = stats
 
   return (
     <div className="space-y-6">
-      {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <Card className="p-3 text-center">
-          <p className="text-2xl font-bold text-cyan">{summary?.total || 0}</p>
-          <p className="text-xs text-text-secondary">Événements</p>
+        <Card className="p-4 text-center">
+          <p className="text-2xl font-bold text-brand-500">{summary?.total || 0}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Événements</p>
         </Card>
-        <Card className="p-3 text-center">
-          <p className="text-2xl font-bold text-red-400">{summary?.login_failed || 0}</p>
-          <p className="text-xs text-text-secondary">Logins échoués</p>
+        <Card className="p-4 text-center">
+          <p className="text-2xl font-bold text-red-500 dark:text-red-400">{summary?.login_failed || 0}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Logins échoués</p>
         </Card>
-        <Card className="p-3 text-center">
-          <p className="text-2xl font-bold text-green-400">{summary?.login_success || 0}</p>
-          <p className="text-xs text-text-secondary">Logins réussis</p>
+        <Card className="p-4 text-center">
+          <p className="text-2xl font-bold text-emerald-500 dark:text-green-400">{summary?.login_success || 0}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Logins réussis</p>
         </Card>
-        <Card className="p-3 text-center">
-          <p className="text-2xl font-bold text-orange-400">{summary?.commands || 0}</p>
-          <p className="text-xs text-text-secondary">Commandes</p>
+        <Card className="p-4 text-center">
+          <p className="text-2xl font-bold text-orange-500 dark:text-orange-400">{summary?.commands || 0}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Commandes</p>
         </Card>
-        <Card className="p-3 text-center">
-          <p className="text-2xl font-bold text-text-primary">{summary?.unique_ips || 0}</p>
-          <p className="text-xs text-text-secondary">IPs uniques</p>
+        <Card className="p-4 text-center">
+          <p className="text-2xl font-bold text-slate-700 dark:text-white">{summary?.unique_ips || 0}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">IPs uniques</p>
         </Card>
       </div>
 
-      {/* Attacks per day chart */}
       {perDay?.length > 0 && (
         <Card className="p-4">
-          <h3 className="text-sm font-medium mb-3">Attaques par jour (30j)</h3>
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Attaques par jour (30j)</h3>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={perDay.map((d) => ({
@@ -178,18 +176,17 @@ function StatsTab({ stats }) {
                 <XAxis dataKey="day" tick={{ fill: '#94A3B8', fontSize: 11 }} interval="preserveStartEnd" />
                 <YAxis tick={{ fill: '#94A3B8', fontSize: 11 }} />
                 <Tooltip
-                  contentStyle={{ background: '#0A1628', border: '1px solid rgba(0,212,255,0.3)', borderRadius: 8 }}
+                  contentStyle={{ background: 'rgba(30,41,59,0.9)', border: '1px solid rgba(14,165,233,0.3)', borderRadius: 12, backdropFilter: 'blur(8px)' }}
                   labelStyle={{ color: '#E2E8F0' }}
-                  itemStyle={{ color: '#00D4FF' }}
+                  itemStyle={{ color: '#0ea5e9' }}
                 />
-                <Bar dataKey="count" fill="#00D4FF" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="#0ea5e9" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
       )}
 
-      {/* Top lists */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <TopList title="Top mots de passe" items={topPasswords} field="password" />
         <TopList title="Top usernames" items={topUsernames} field="username" />
@@ -206,18 +203,18 @@ function TopList({ title, items, field, extra }) {
 
   return (
     <Card className="p-4">
-      <h3 className="text-sm font-medium mb-3">{title}</h3>
+      <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">{title}</h3>
       <div className="space-y-2">
         {items.map((item, i) => (
           <div key={i} className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="text-text-secondary w-5 text-right">{i + 1}.</span>
-              <span className="truncate font-mono text-xs">{item[field]}</span>
+              <span className="text-slate-400 dark:text-slate-500 w-5 text-right">{i + 1}.</span>
+              <span className="truncate font-mono text-xs text-slate-700 dark:text-slate-200">{item[field]}</span>
               {extra && item[extra] && (
-                <span className="text-xs text-text-secondary">({item[extra]})</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500">({item[extra]})</span>
               )}
             </div>
-            <span className="text-cyan font-medium ml-2">{item.count}</span>
+            <span className="text-brand-500 font-semibold ml-2">{item.count}</span>
           </div>
         ))}
       </div>
@@ -229,10 +226,10 @@ function TopList({ title, items, field, extra }) {
 function MapTab({ points }) {
   return (
     <div className="space-y-4">
-      <Card className="p-0 overflow-hidden" style={{ height: '500px' }}>
+      <Card className="p-0 overflow-hidden rounded-2xl" style={{ height: '500px' }}>
         <AttackMap points={points} />
       </Card>
-      <p className="text-xs text-text-secondary text-center">
+      <p className="text-xs text-slate-400 dark:text-slate-500 text-center">
         {points.length} source(s) d'attaque géolocalisée(s)
       </p>
     </div>
@@ -242,31 +239,31 @@ function MapTab({ points }) {
 // ─── Timeline Tab ────────────────────────────────────────────────
 function TimelineTab({ events }) {
   if (!events?.length) {
-    return <p className="text-text-secondary text-sm">Aucun événement enregistré.</p>
+    return <p className="text-slate-500 dark:text-slate-400 text-sm">Aucun événement enregistré.</p>
   }
 
   return (
     <div className="space-y-2">
       {events.map((e) => (
-        <Card key={e.id} className="p-3">
+        <Card key={e.id} className="p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
-                <span className={`text-xs px-2 py-0.5 rounded-full ${eventColors[e.event_type] || 'bg-gray-500/20 text-gray-400'}`}>
+                <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${eventColors[e.event_type] || 'bg-slate-100 text-slate-600 dark:bg-slate-500/20 dark:text-slate-400'}`}>
                   {eventLabels[e.event_type] || e.event_type}
                 </span>
-                <span className="text-xs font-mono text-text-secondary">{e.src_ip}</span>
+                <span className="text-xs font-mono text-slate-500 dark:text-slate-400">{e.src_ip}</span>
                 {e.country && e.country !== 'Unknown' && (
-                  <span className="text-xs text-text-secondary">({e.country})</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">({e.country})</span>
                 )}
               </div>
               {e.username && (
-                <p className="text-sm ml-1">
-                  <span className="text-text-secondary">user:</span>{' '}
+                <p className="text-sm ml-1 text-slate-700 dark:text-slate-200">
+                  <span className="text-slate-400 dark:text-slate-500">user:</span>{' '}
                   <span className="font-mono">{e.username}</span>
                   {e.password && (
                     <>
-                      {' '}<span className="text-text-secondary">pass:</span>{' '}
+                      {' '}<span className="text-slate-400 dark:text-slate-500">pass:</span>{' '}
                       <span className="font-mono">{e.password}</span>
                     </>
                   )}
@@ -274,12 +271,12 @@ function TimelineTab({ events }) {
               )}
               {e.command && (
                 <p className="text-sm ml-1">
-                  <span className="text-text-secondary">$</span>{' '}
-                  <span className="font-mono text-cyan">{e.command}</span>
+                  <span className="text-slate-400 dark:text-slate-500">$</span>{' '}
+                  <span className="font-mono text-brand-500">{e.command}</span>
                 </p>
               )}
             </div>
-            <span className="text-xs text-text-secondary whitespace-nowrap">{fmtDate(e.event_at)}</span>
+            <span className="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap">{fmtDate(e.event_at)}</span>
           </div>
         </Card>
       ))}

@@ -44,9 +44,9 @@ export default function AttackMap({ points = [] }) {
 
       const marker = L.circleMarker([point.latitude, point.longitude], {
         radius: size,
-        fillColor: '#00D4FF',
+        fillColor: '#0ea5e9',
         fillOpacity: 0.6,
-        color: '#00D4FF',
+        color: '#0ea5e9',
         weight: 1,
         opacity: 0.8
       })
@@ -55,7 +55,7 @@ export default function AttackMap({ points = [] }) {
         `<div style="font-size:13px;line-height:1.6">
           <strong>${point.src_ip}</strong><br/>
           ${point.city || ''}, ${point.country || ''}<br/>
-          <span style="color:#00D4FF">${point.count} attaque(s)</span>
+          <span style="color:#0ea5e9">${point.count} attaque(s)</span>
         </div>`,
         { className: 'honeypot-popup' }
       )
@@ -68,13 +68,14 @@ export default function AttackMap({ points = [] }) {
     <>
       <style>{`
         .honeypot-popup .leaflet-popup-content-wrapper {
-          background: #0A1628;
+          background: rgba(30, 41, 59, 0.9);
           color: #E2E8F0;
-          border: 1px solid rgba(0,212,255,0.3);
-          border-radius: 8px;
+          border: 1px solid rgba(14, 165, 233, 0.3);
+          border-radius: 12px;
+          backdrop-filter: blur(8px);
         }
         .honeypot-popup .leaflet-popup-tip {
-          background: #0A1628;
+          background: rgba(30, 41, 59, 0.9);
         }
       `}</style>
       <div ref={mapRef} style={{ width: '100%', height: '100%' }} />

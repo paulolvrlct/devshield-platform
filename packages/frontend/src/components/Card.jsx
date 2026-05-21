@@ -1,8 +1,8 @@
-// Carte glassmorphism — charte Bastion Digital.
+// Carte glassmorphism — charte DevShield.
 export default function Card({ children, className = '', ...props }) {
   return (
     <div
-      className={`rounded-2xl border border-cyan/15 bg-white/5 backdrop-blur-[12px] ${className}`}
+      className={`glass-card rounded-2xl ${className}`}
       {...props}
     >
       {children}

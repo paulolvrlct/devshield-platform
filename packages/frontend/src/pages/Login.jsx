@@ -29,12 +29,19 @@ export default function Login() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-navy p-6">
-      <Card className="w-full max-w-sm p-8">
-        <h1 className="text-xl font-semibold text-text-primary">
-          Dev<span className="text-cyan">Shield</span>
+    <main className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-navy p-6 relative">
+      {/* Background blobs */}
+      <div className="blob-container">
+        <div className="blob blob-1" />
+        <div className="blob blob-2" />
+        <div className="blob blob-3" />
+      </div>
+
+      <Card className="relative z-10 w-full max-w-sm p-8">
+        <h1 className="text-xl font-bold text-slate-800 dark:text-white">
+          Dev<span className="text-brand-500">Shield</span>
         </h1>
-        <p className="mt-1 text-sm text-text-secondary">Connexion à la plateforme</p>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Connexion à la plateforme</p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <Input
@@ -56,7 +63,7 @@ export default function Login() {
             onChange={(event) => setPassword(event.target.value)}
           />
           {error && (
-            <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+            <p className="rounded-xl border border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-300">
               {error}
             </p>
           )}

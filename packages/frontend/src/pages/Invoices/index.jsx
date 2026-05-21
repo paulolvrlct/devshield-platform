@@ -5,10 +5,10 @@ import Button from '../../components/Button.jsx'
 import { api } from '../../api/client.js'
 
 const STATUS_LABELS = {
-  draft: { label: 'Brouillon', color: 'text-text-secondary border-white/20 bg-white/5' },
-  sent: { label: 'Envoyé', color: 'text-cyan border-cyan/30 bg-cyan/10' },
-  paid: { label: 'Payé', color: 'text-green-400 border-green-400/30 bg-green-400/10' },
-  cancelled: { label: 'Annulé', color: 'text-red-400 border-red-400/30 bg-red-400/10' }
+  draft: { label: 'Brouillon', color: 'text-slate-600 dark:text-slate-400 border-slate-300 dark:border-white/20 bg-slate-100 dark:bg-white/5' },
+  sent: { label: 'Envoyé', color: 'text-brand-600 dark:text-brand-400 border-brand-300 dark:border-brand-500/30 bg-brand-50 dark:bg-brand-500/10' },
+  paid: { label: 'Payé', color: 'text-emerald-600 dark:text-green-400 border-emerald-300 dark:border-green-400/30 bg-emerald-50 dark:bg-green-400/10' },
+  cancelled: { label: 'Annulé', color: 'text-red-600 dark:text-red-400 border-red-300 dark:border-red-400/30 bg-red-50 dark:bg-red-400/10' }
 }
 
 const STATUS_OPTIONS = ['draft', 'sent', 'paid', 'cancelled']
@@ -85,7 +85,7 @@ export default function Invoices() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-text-primary">Devis & Factures</h1>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Devis & Factures</h1>
         <Button variant="primary" onClick={() => setCreating(true)}>+ Nouveau</Button>
       </div>
 
@@ -93,7 +93,7 @@ export default function Invoices() {
         <FilterBtn label="Tous" active={!filter.type} onClick={() => setFilter((f) => ({ ...f, type: '' }))} />
         <FilterBtn label="Devis" active={filter.type === 'devis'} onClick={() => setFilter((f) => ({ ...f, type: 'devis' }))} />
         <FilterBtn label="Factures" active={filter.type === 'facture'} onClick={() => setFilter((f) => ({ ...f, type: 'facture' }))} />
-        <span className="mx-2 border-l border-white/10" />
+        <span className="mx-2 border-l border-slate-200 dark:border-white/10" />
         <FilterBtn label="Tous statuts" active={!filter.status} onClick={() => setFilter((f) => ({ ...f, status: '' }))} />
         {STATUS_OPTIONS.map((s) => (
           <FilterBtn key={s} label={STATUS_LABELS[s].label} active={filter.status === s}
@@ -102,31 +102,31 @@ export default function Invoices() {
       </div>
 
       {loading ? (
-        <p className="text-text-secondary text-sm">Chargement…</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm">Chargement…</p>
       ) : invoices.length === 0 ? (
         <Card className="p-6 text-center">
-          <p className="text-text-secondary">Aucun document</p>
+          <p className="text-slate-500 dark:text-slate-400">Aucun document</p>
         </Card>
       ) : (
         <div className="space-y-3">
           {invoices.map((inv) => (
             <Card
               key={inv.id}
-              className="p-4 cursor-pointer hover:border-cyan/30 transition-colors"
+              className="p-4 cursor-pointer hover:scale-[1.005] transition-transform"
               onClick={() => setSelected(inv)}
             >
               <div className="flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs uppercase text-text-secondary">{inv.type}</span>
-                    <h3 className="font-medium text-text-primary">{inv.number}</h3>
+                    <span className="text-xs uppercase text-slate-400 dark:text-slate-500">{inv.type}</span>
+                    <h3 className="font-semibold text-slate-800 dark:text-white">{inv.number}</h3>
                   </div>
-                  <p className="text-sm text-text-secondary">{inv.client_name}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{inv.client_name}</p>
                 </div>
                 <div className="flex items-center gap-3 text-right">
                   <div>
-                    <p className="font-medium text-text-primary">{formatAmount(inv.amount_ttc)}</p>
-                    <p className="text-xs text-text-secondary">{formatDate(inv.issued_at)}</p>
+                    <p className="font-semibold text-slate-800 dark:text-white">{formatAmount(inv.amount_ttc)}</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500">{formatDate(inv.issued_at)}</p>
                   </div>
                   <StatusBadge status={inv.status} />
                 </div>
@@ -139,18 +139,16 @@ export default function Invoices() {
   )
 }
 
-// --- Sub-components ---
-
 function StatusBadge({ status }) {
   const s = STATUS_LABELS[status] || STATUS_LABELS.draft
-  return <span className={`rounded-full border px-2 py-0.5 text-xs ${s.color}`}>{s.label}</span>
+  return <span className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${s.color}`}>{s.label}</span>
 }
 
 function FilterBtn({ label, active, onClick }) {
   return (
     <button onClick={onClick}
-      className={`rounded-full border px-3 py-1 text-xs transition-colors ${
-        active ? 'border-cyan/50 bg-cyan/10 text-cyan' : 'border-white/10 bg-white/5 text-text-secondary hover:border-white/20'
+      className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${
+        active ? 'border-brand-400 dark:border-brand-500/50 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400' : 'border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-white/20'
       }`}>{label}</button>
   )
 }
@@ -192,12 +190,12 @@ function CreateInvoice({ clients, onCreated, onCancel }) {
     <div>
       <Button variant="ghost" onClick={onCancel} className="mb-4">← Retour</Button>
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-text-primary mb-4">Nouveau devis / facture</h2>
+        <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-4">Nouveau devis / facture</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm text-text-secondary">Client *</label>
+            <label className="mb-1 block text-sm text-slate-600 dark:text-slate-400">Client *</label>
             <select value={form.clientId} onChange={set('clientId')}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-text-primary focus:border-cyan/50 focus:outline-none">
+              className="glass-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-brand-500/40 focus:outline-none">
               <option value="">— Sélectionner un client —</option>
               {clients.map((c) => (
                 <option key={c.id} value={c.id}>{c.company_name} ({c.contact_name})</option>
@@ -206,27 +204,27 @@ function CreateInvoice({ clients, onCreated, onCancel }) {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-text-secondary">Type *</label>
+            <label className="mb-1 block text-sm text-slate-600 dark:text-slate-400">Type *</label>
             <div className="flex gap-3">
               {['devis', 'facture'].map((t) => (
                 <button key={t} type="button" onClick={() => set('type')(t)}
-                  className={`flex-1 rounded-lg border px-4 py-2 text-sm capitalize transition-colors ${
-                    form.type === t ? 'border-cyan/50 bg-cyan/10 text-cyan' : 'border-white/10 bg-white/5 text-text-secondary'
+                  className={`flex-1 rounded-xl border px-4 py-2.5 text-sm capitalize transition-all ${
+                    form.type === t ? 'border-brand-400 dark:border-brand-500/50 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400' : 'glass-input text-slate-500 dark:text-slate-400'
                   }`}>{t}</button>
               ))}
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-text-secondary">Pack *</label>
+            <label className="mb-1 block text-sm text-slate-600 dark:text-slate-400">Pack *</label>
             <div className="flex gap-3">
               {[{ k: 'essentiel', label: 'Essentiel', price: '700 €' },
                 { k: 'optimal', label: 'Optimal', price: '850 €' },
                 { k: 'custom', label: 'Personnalisé', price: '—' }
               ].map((p) => (
                 <button key={p.k} type="button" onClick={() => setPack(p.k)}
-                  className={`flex-1 rounded-lg border px-4 py-3 text-sm transition-colors ${
-                    form.pack === p.k ? 'border-cyan/50 bg-cyan/10 text-cyan' : 'border-white/10 bg-white/5 text-text-secondary'
+                  className={`flex-1 rounded-xl border px-4 py-3 text-sm transition-all ${
+                    form.pack === p.k ? 'border-brand-400 dark:border-brand-500/50 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400' : 'glass-input text-slate-500 dark:text-slate-400'
                   }`}>
                   <span className="font-medium">{p.label}</span>
                   <span className="block text-xs mt-1 opacity-70">{p.price}</span>
@@ -237,27 +235,27 @@ function CreateInvoice({ clients, onCreated, onCancel }) {
 
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="mb-1 block text-sm text-text-secondary">Montant HT (centimes) *</label>
+              <label className="mb-1 block text-sm text-slate-600 dark:text-slate-400">Montant HT (centimes) *</label>
               <input type="number" value={form.amountHt} onChange={set('amountHt')} min="1"
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-text-primary focus:border-cyan/50 focus:outline-none" />
-              <span className="text-xs text-text-secondary">{(form.amountHt / 100).toFixed(2)} €</span>
+                className="glass-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-brand-500/40 focus:outline-none" />
+              <span className="text-xs text-slate-400 dark:text-slate-500">{(form.amountHt / 100).toFixed(2)} €</span>
             </div>
             <div className="w-32">
-              <label className="mb-1 block text-sm text-text-secondary">TVA %</label>
+              <label className="mb-1 block text-sm text-slate-600 dark:text-slate-400">TVA %</label>
               <input type="number" value={form.taxRate} onChange={set('taxRate')} min="0" max="100"
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-text-primary focus:border-cyan/50 focus:outline-none" />
+                className="glass-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-brand-500/40 focus:outline-none" />
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-sm text-text-secondary">Description</label>
+            <label className="mb-1 block text-sm text-slate-600 dark:text-slate-400">Description</label>
             <textarea value={form.description} onChange={set('description')} rows={3}
               placeholder="Détail de la prestation…"
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-text-primary placeholder:text-text-secondary/50 focus:border-cyan/50 focus:outline-none" />
+              className="glass-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400/60 dark:placeholder:text-slate-500/50 focus:ring-2 focus:ring-brand-500/40 focus:outline-none" />
           </div>
 
           {error && (
-            <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p>
+            <p className="rounded-xl border border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-300">{error}</p>
           )}
           <Button type="submit" variant="primary" disabled={submitting}>
             {submitting ? 'Création…' : 'Créer le document'}
@@ -275,14 +273,12 @@ function InvoiceDetail({ invoice: inv, onBack, onStatusChange, onDownload, forma
       <Card className="p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="text-xs uppercase text-text-secondary">{inv.type}</span>
-            <h2 className="text-lg font-semibold text-text-primary">{inv.number}</h2>
+            <span className="text-xs uppercase text-slate-400 dark:text-slate-500">{inv.type}</span>
+            <h2 className="text-lg font-bold text-slate-800 dark:text-white">{inv.number}</h2>
           </div>
           <div className="flex items-center gap-3">
             <StatusBadge status={inv.status} />
-            <Button variant="primary" onClick={() => onDownload(inv.id)}>
-              Télécharger PDF
-            </Button>
+            <Button variant="primary" onClick={() => onDownload(inv.id)}>Télécharger PDF</Button>
           </div>
         </div>
 
@@ -295,35 +291,35 @@ function InvoiceDetail({ invoice: inv, onBack, onStatusChange, onDownload, forma
           {inv.paid_at && <Field label="Payé le" value={formatDate(inv.paid_at)} />}
         </div>
 
-        <div className="border-t border-white/10 pt-4 mb-6">
+        <div className="border-t border-slate-200 dark:border-white/10 pt-4 mb-6">
           <div className="flex justify-between text-sm mb-1">
-            <span className="text-text-secondary">Montant HT</span>
-            <span className="text-text-primary">{formatAmount(inv.amount_ht)}</span>
+            <span className="text-slate-500 dark:text-slate-400">Montant HT</span>
+            <span className="text-slate-800 dark:text-white">{formatAmount(inv.amount_ht)}</span>
           </div>
           <div className="flex justify-between text-sm mb-1">
-            <span className="text-text-secondary">TVA ({inv.tax_rate}%)</span>
-            <span className="text-text-primary">{formatAmount(inv.amount_ttc - inv.amount_ht)}</span>
+            <span className="text-slate-500 dark:text-slate-400">TVA ({inv.tax_rate}%)</span>
+            <span className="text-slate-800 dark:text-white">{formatAmount(inv.amount_ttc - inv.amount_ht)}</span>
           </div>
-          <div className="flex justify-between text-sm font-semibold mt-2 pt-2 border-t border-white/10">
-            <span className="text-cyan">Total TTC</span>
-            <span className="text-cyan">{formatAmount(inv.amount_ttc)}</span>
+          <div className="flex justify-between text-sm font-bold mt-2 pt-2 border-t border-slate-200 dark:border-white/10">
+            <span className="text-brand-500">Total TTC</span>
+            <span className="text-brand-500">{formatAmount(inv.amount_ttc)}</span>
           </div>
         </div>
 
         {inv.description && (
           <div className="mb-6">
-            <span className="text-xs text-text-secondary">Description</span>
-            <p className="text-sm text-text-primary whitespace-pre-wrap">{inv.description}</p>
+            <span className="text-xs text-slate-400 dark:text-slate-500">Description</span>
+            <p className="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap">{inv.description}</p>
           </div>
         )}
 
         <div>
-          <span className="text-xs text-text-secondary block mb-2">Changer le statut</span>
+          <span className="text-xs text-slate-400 dark:text-slate-500 block mb-2">Changer le statut</span>
           <div className="flex gap-2">
             {STATUS_OPTIONS.map((s) => (
               <button key={s} onClick={() => onStatusChange(inv.id, s)} disabled={inv.status === s}
-                className={`rounded-lg border px-3 py-1.5 text-xs transition-colors ${
-                  inv.status === s ? 'border-cyan/50 bg-cyan/10 text-cyan' : 'border-white/10 bg-white/5 text-text-secondary hover:border-white/20'
+                className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all ${
+                  inv.status === s ? 'border-brand-400 dark:border-brand-500/50 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400' : 'glass-input text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-white/20'
                 }`}>{STATUS_LABELS[s].label}</button>
             ))}
           </div>
@@ -336,8 +332,8 @@ function InvoiceDetail({ invoice: inv, onBack, onStatusChange, onDownload, forma
 function Field({ label, value }) {
   return (
     <div>
-      <span className="text-xs text-text-secondary">{label}</span>
-      <p className="text-sm text-text-primary">{value || '—'}</p>
+      <span className="text-xs text-slate-400 dark:text-slate-500">{label}</span>
+      <p className="text-sm text-slate-800 dark:text-white">{value || '—'}</p>
     </div>
   )
 }

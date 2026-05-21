@@ -9,7 +9,7 @@ export default function Clients() {
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [editing, setEditing] = useState(null) // null = list, 'new' = create, {client} = edit
+  const [editing, setEditing] = useState(null)
 
   const load = async () => {
     setLoading(true)
@@ -41,7 +41,7 @@ export default function Clients() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-text-primary">Clients</h1>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Clients</h1>
         <Button variant="primary" onClick={() => setEditing('new')}>+ Nouveau client</Button>
       </div>
 
@@ -51,31 +51,31 @@ export default function Clients() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher un client…"
-          className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-text-primary placeholder:text-text-secondary/50 focus:border-cyan/50 focus:outline-none"
+          className="glass-input flex-1 rounded-xl px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400/60 dark:placeholder:text-slate-500/50 focus:ring-2 focus:ring-brand-500/40 focus:outline-none"
         />
         <Button variant="ghost" type="submit">Rechercher</Button>
       </form>
 
       {loading ? (
-        <p className="text-text-secondary text-sm">Chargement…</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm">Chargement…</p>
       ) : clients.length === 0 ? (
         <Card className="p-6 text-center">
-          <p className="text-text-secondary">Aucun client</p>
+          <p className="text-slate-500 dark:text-slate-400">Aucun client</p>
         </Card>
       ) : (
         <div className="space-y-3">
           {clients.map((c) => (
             <Card
               key={c.id}
-              className="p-4 cursor-pointer hover:border-cyan/30 transition-colors"
+              className="p-4 cursor-pointer hover:scale-[1.005] transition-transform"
               onClick={() => setEditing(c)}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium text-text-primary">{c.company_name}</h3>
-                  <p className="text-sm text-text-secondary">{c.contact_name} — {c.email}</p>
+                  <h3 className="font-semibold text-slate-800 dark:text-white">{c.company_name}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{c.contact_name} — {c.email}</p>
                 </div>
-                <span className="text-xs text-text-secondary">
+                <span className="text-xs text-slate-400 dark:text-slate-500">
                   {new Date(c.created_at).toLocaleDateString('fr-FR')}
                 </span>
               </div>
@@ -126,7 +126,7 @@ function ClientForm({ client, onSaved, onCancel }) {
     <div>
       <Button variant="ghost" onClick={onCancel} className="mb-4">← Retour</Button>
       <Card className="p-6">
-        <h2 className="text-lg font-semibold text-text-primary mb-4">
+        <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-4">
           {isNew ? 'Nouveau client' : `Modifier — ${client.company_name}`}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -138,17 +138,17 @@ function ClientForm({ client, onSaved, onCancel }) {
           <Input id="siret" label="SIRET" value={form.siret} onChange={set('siret')} />
           <Input id="websiteUrl" label="Site web" value={form.websiteUrl} onChange={set('websiteUrl')} />
           <div>
-            <label htmlFor="notes" className="mb-1 block text-sm text-text-secondary">Notes</label>
+            <label htmlFor="notes" className="mb-1 block text-sm text-slate-600 dark:text-slate-400">Notes</label>
             <textarea
               id="notes"
               value={form.notes}
               onChange={set('notes')}
               rows={3}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-text-primary focus:border-cyan/50 focus:outline-none"
+              className="glass-input w-full rounded-xl px-4 py-2.5 text-sm text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-brand-500/40 focus:outline-none"
             />
           </div>
           {error && (
-            <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p>
+            <p className="rounded-xl border border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-300">{error}</p>
           )}
           <Button type="submit" variant="primary" disabled={submitting}>
             {submitting ? 'Enregistrement…' : (isNew ? 'Créer le client' : 'Enregistrer')}
