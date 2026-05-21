@@ -16,7 +16,7 @@ const submissionSchema = z.object({
   contactName: z.string().min(1).max(255),
   email: z.string().email().max(255),
   phone: z.string().max(30).optional().default(''),
-  websiteUrl: z.string().url().max(500).optional().or(z.literal('')).default(''),
+  websiteUrl: z.string().max(500).optional().default(''),
   activity: z.string().max(2000).optional().default(''),
   pack: z.enum(['essentiel', 'optimal']).default('essentiel'),
   pages: z.string().max(2000).optional().default(''),
