@@ -5,6 +5,8 @@ import Button from './Button.jsx'
 
 const NAV_LINKS = [
   { to: '/', label: 'Tableau de bord' },
+  { to: '/admin/clients', label: 'Clients', adminOnly: true },
+  { to: '/admin/invoices', label: 'Factures', adminOnly: true },
   { to: '/admin/onboarding', label: 'Onboarding', adminOnly: true }
 ]
 

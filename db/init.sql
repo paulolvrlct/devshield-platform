@@ -50,3 +50,47 @@ CREATE TABLE IF NOT EXISTS onboarding.submissions (
 
 CREATE INDEX IF NOT EXISTS idx_submissions_status ON onboarding.submissions (status);
 CREATE INDEX IF NOT EXISTS idx_submissions_created ON onboarding.submissions (created_at DESC);
+
+-- Table des clients (schéma clients)
+CREATE TABLE IF NOT EXISTS clients.clients (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_name VARCHAR(255) NOT NULL,
+  contact_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  phone VARCHAR(30),
+  address TEXT,
+  siret VARCHAR(20),
+  website_url VARCHAR(500),
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_clients_email ON clients.clients (email);
+
+-- Table des factures/devis (schéma invoices)
+CREATE TABLE IF NOT EXISTS invoices.invoices (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id UUID NOT NULL REFERENCES clients.clients(id) ON DELETE RESTRICT,
+  type VARCHAR(10) NOT NULL CHECK (type IN ('devis', 'facture')),
+  number VARCHAR(20) NOT NULL UNIQUE,
+  status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'sent', 'paid', 'cancelled')),
+  pack VARCHAR(50) NOT NULL,
+  description TEXT,
+  amount_ht INTEGER NOT NULL,
+  tax_rate INTEGER DEFAULT 0,
+  amount_ttc INTEGER NOT NULL,
+  issued_at DATE NOT NULL DEFAULT CURRENT_DATE,
+  due_at DATE,
+  paid_at DATE,
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_invoices_client ON invoices.invoices (client_id);
+CREATE INDEX IF NOT EXISTS idx_invoices_number ON invoices.invoices (number);
+CREATE INDEX IF NOT EXISTS idx_invoices_status ON invoices.invoices (status);
+
+-- Séquence pour la numérotation automatique (YYYY-NNN)
+CREATE SEQUENCE IF NOT EXISTS invoices.invoice_seq START 1;

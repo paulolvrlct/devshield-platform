@@ -6,6 +6,8 @@ import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard/index.jsx'
 import OnboardingForm from './pages/Onboarding/index.jsx'
 import Submissions from './pages/Onboarding/Submissions.jsx'
+import ClientsPage from './pages/Clients/index.jsx'
+import InvoicesPage from './pages/Invoices/index.jsx'
 
 export default function App() {
   return (
@@ -30,6 +32,26 @@ export default function App() {
           <ProtectedRoute>
             <Layout>
               <Submissions />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/clients"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <ClientsPage />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/invoices"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <InvoicesPage />
             </Layout>
           </ProtectedRoute>
         }

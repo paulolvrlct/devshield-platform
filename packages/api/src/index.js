@@ -9,6 +9,8 @@ import { notFound, errorHandler } from './utils/errors.js'
 import { generalLimiter } from './middleware/rateLimit.js'
 import authRouter from './routes/auth.js'
 import onboardingRouter from './routes/onboarding.js'
+import clientsRouter from './routes/clients.js'
+import invoicesRouter from './routes/invoices.js'
 
 const app = express()
 const port = Number(process.env.API_PORT) || 3000
@@ -36,6 +38,8 @@ app.get('/api/v1/health', async (req, res, next) => {
 
 app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/onboarding', onboardingRouter)
+app.use('/api/v1/clients', clientsRouter)
+app.use('/api/v1/invoices', invoicesRouter)
 
 app.use(notFound)
 app.use(errorHandler)
