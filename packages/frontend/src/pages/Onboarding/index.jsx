@@ -4,6 +4,7 @@ import Card from '../../components/Card.jsx'
 import Button from '../../components/Button.jsx'
 import Input from '../../components/Input.jsx'
 import { api } from '../../api/client.js'
+import logoIcon from '../../assets/logo-icon.png'
 
 const STEPS = [
   { title: 'Votre entreprise', subtitle: 'Informations de contact' },
@@ -84,10 +85,15 @@ export default function OnboardingForm() {
         <div className="blob blob-3" />
       </div>
       <Card className="relative z-10 w-full max-w-lg p-8">
-        <h1 className="text-xl font-bold text-slate-800 dark:text-white">
-          Dev<span className="text-brand-500">Shield</span>
-        </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Formulaire de prise en charge</p>
+        <div className="flex items-center gap-3">
+          <img src={logoIcon} alt="DevShield" className="h-10 w-10" />
+          <div>
+            <h1 className="text-xl font-bold text-slate-800 dark:text-white">
+              Dev<span className="text-brand-500">Shield</span>
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Formulaire de prise en charge</p>
+          </div>
+        </div>
 
         {/* Progress bar */}
         <div className="mt-6 flex gap-2">

@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth.jsx'
 import Card from '../components/Card.jsx'
 import Button from '../components/Button.jsx'
 import Input from '../components/Input.jsx'
+import logoIcon from '../assets/logo-icon.png'
 
 export default function Login() {
   const { login } = useAuth()
@@ -38,10 +39,15 @@ export default function Login() {
       </div>
 
       <Card className="relative z-10 w-full max-w-sm p-8">
-        <h1 className="text-xl font-bold text-slate-800 dark:text-white">
-          Dev<span className="text-brand-500">Shield</span>
-        </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Connexion à la plateforme</p>
+        <div className="flex items-center gap-3">
+          <img src={logoIcon} alt="DevShield" className="h-10 w-10" />
+          <div>
+            <h1 className="text-xl font-bold text-slate-800 dark:text-white">
+              Dev<span className="text-brand-500">Shield</span>
+            </h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Connexion à la plateforme</p>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <Input

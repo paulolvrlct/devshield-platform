@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useTheme } from '../hooks/useTheme.jsx'
 import Button from './Button.jsx'
+import logoIcon from '../assets/logo-icon.png'
 
 const NAV_LINKS = [
   { to: '/', label: 'Tableau de bord' },
@@ -32,7 +33,8 @@ export default function Layout({ children }) {
       <header className="glass-panel sticky top-0 z-50">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-8">
-            <Link to="/" className="text-lg font-bold text-slate-800 dark:text-white">
+            <Link to="/" className="flex items-center gap-2 text-lg font-bold text-slate-800 dark:text-white">
+              <img src={logoIcon} alt="DevShield" className="h-8 w-8" />
               Dev<span className="text-brand-500">Shield</span>
             </Link>
             <nav className="hidden md:flex items-center gap-1">
