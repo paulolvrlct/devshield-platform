@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { to: '/admin/clients', label: 'Clients', adminOnly: true },
   { to: '/admin/invoices', label: 'Factures', adminOnly: true },
   { to: '/admin/audits', label: 'Audit', adminOnly: true },
+  { to: '/admin/honeypot', label: 'Honeypot', adminOnly: true },
   { to: '/admin/onboarding', label: 'Onboarding', adminOnly: true }
 ]
 

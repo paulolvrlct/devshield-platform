@@ -9,6 +9,7 @@ import Submissions from './pages/Onboarding/Submissions.jsx'
 import ClientsPage from './pages/Clients/index.jsx'
 import InvoicesPage from './pages/Invoices/index.jsx'
 import AuditPage from './pages/Audit/index.jsx'
+import HoneypotPage from './pages/Honeypot/index.jsx'
 
 export default function App() {
   return (
@@ -63,6 +64,16 @@ export default function App() {
           <ProtectedRoute>
             <Layout>
               <AuditPage />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/honeypot"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <HoneypotPage />
             </Layout>
           </ProtectedRoute>
         }

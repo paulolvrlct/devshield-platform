@@ -152,6 +152,30 @@ CREATE TABLE IF NOT EXISTS audits.scans (
 CREATE INDEX IF NOT EXISTS idx_scans_client ON audits.scans (client_id);
 CREATE INDEX IF NOT EXISTS idx_scans_created ON audits.scans (created_at DESC);
 
+-- Événements honeypot Cowrie (schéma honeypot)
+CREATE TABLE IF NOT EXISTS honeypot.events (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_type VARCHAR(50) NOT NULL,
+  src_ip VARCHAR(45) NOT NULL,
+  src_port INTEGER,
+  dst_port INTEGER DEFAULT 22,
+  username VARCHAR(255),
+  password VARCHAR(255),
+  command TEXT,
+  session_id VARCHAR(50),
+  country VARCHAR(100),
+  city VARCHAR(100),
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION,
+  raw_log TEXT,
+  event_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_honeypot_ip ON honeypot.events (src_ip);
+CREATE INDEX IF NOT EXISTS idx_honeypot_type ON honeypot.events (event_type);
+CREATE INDEX IF NOT EXISTS idx_honeypot_event_at ON honeypot.events (event_at DESC);
+
 -- Lien entre un client et son user account (schéma clients)
 CREATE TABLE IF NOT EXISTS clients.client_users (
   client_id UUID NOT NULL REFERENCES clients.clients(id) ON DELETE CASCADE,
