@@ -11,6 +11,8 @@ import authRouter from './routes/auth.js'
 import onboardingRouter from './routes/onboarding.js'
 import clientsRouter from './routes/clients.js'
 import invoicesRouter from './routes/invoices.js'
+import dashboardRouter from './routes/dashboard.js'
+import { runAllChecks } from './services/monitor.js'
 
 const app = express()
 const port = Number(process.env.API_PORT) || 3000
@@ -40,10 +42,16 @@ app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/onboarding', onboardingRouter)
 app.use('/api/v1/clients', clientsRouter)
 app.use('/api/v1/invoices', invoicesRouter)
+app.use('/api/v1/dashboard', dashboardRouter)
 
 app.use(notFound)
 app.use(errorHandler)
 
 app.listen(port, () => {
   logger.info(`API listening on port ${port}`)
+
+  // Uptime monitoring: check every 5 minutes
+  const FIVE_MINUTES = 5 * 60 * 1000
+  runAllChecks()
+  setInterval(runAllChecks, FIVE_MINUTES)
 })

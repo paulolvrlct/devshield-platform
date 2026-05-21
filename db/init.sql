@@ -94,3 +94,49 @@ CREATE INDEX IF NOT EXISTS idx_invoices_status ON invoices.invoices (status);
 
 -- Séquence pour la numérotation automatique (YYYY-NNN)
 CREATE SEQUENCE IF NOT EXISTS invoices.invoice_seq START 1;
+
+-- Sites monitorés (schéma clients)
+CREATE TABLE IF NOT EXISTS clients.sites (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id UUID NOT NULL REFERENCES clients.clients(id) ON DELETE CASCADE,
+  url VARCHAR(500) NOT NULL,
+  label VARCHAR(255),
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_sites_client ON clients.sites (client_id);
+
+-- Résultats des checks uptime (schéma clients)
+CREATE TABLE IF NOT EXISTS clients.uptime_checks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  site_id UUID NOT NULL REFERENCES clients.sites(id) ON DELETE CASCADE,
+  status_code INTEGER,
+  response_time_ms INTEGER,
+  is_up BOOLEAN NOT NULL,
+  error TEXT,
+  checked_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_uptime_site ON clients.uptime_checks (site_id);
+CREATE INDEX IF NOT EXISTS idx_uptime_checked ON clients.uptime_checks (checked_at DESC);
+
+-- Interventions / historique actions (schéma clients)
+CREATE TABLE IF NOT EXISTS clients.interventions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id UUID NOT NULL REFERENCES clients.clients(id) ON DELETE CASCADE,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  type VARCHAR(50) DEFAULT 'maintenance',
+  performed_at DATE NOT NULL DEFAULT CURRENT_DATE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_interventions_client ON clients.interventions (client_id);
+
+-- Lien entre un client et son user account (schéma clients)
+CREATE TABLE IF NOT EXISTS clients.client_users (
+  client_id UUID NOT NULL REFERENCES clients.clients(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  PRIMARY KEY (client_id, user_id)
+);
