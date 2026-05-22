@@ -30,7 +30,10 @@ const corsOrigins = (process.env.CORS_ORIGINS || '')
 
 app.set('trust proxy', 1)
 app.use(helmet())
-app.use(cors({ origin: corsOrigins.length ? corsOrigins : true, credentials: true }))
+app.use(cors({
+  origin: corsOrigins.length ? corsOrigins : 'https://clients.devshield.fr',
+  credentials: true
+}))
 app.use(express.json({ limit: '1mb' }))
 app.use(cookieParser())
 app.use('/api', generalLimiter)
@@ -59,7 +62,10 @@ app.use(errorHandler)
 // HTTP server + Socket.io
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
-  cors: { origin: corsOrigins.length ? corsOrigins : true, credentials: true }
+  cors: {
+    origin: corsOrigins.length ? corsOrigins : 'https://clients.devshield.fr',
+    credentials: true
+  }
 })
 
 io.on('connection', (socket) => {
@@ -76,6 +82,16 @@ httpServer.listen(port, () => {
   const FIVE_MINUTES = 5 * 60 * 1000
   runAllChecks()
   setInterval(runAllChecks, FIVE_MINUTES)
+
+  // Cleanup expired refresh tokens every hour
+  const ONE_HOUR = 60 * 60 * 1000
+  const cleanExpiredTokens = () => {
+    pool.query('DELETE FROM auth.refresh_tokens WHERE expires_at < NOW()')
+      .then(({ rowCount }) => { if (rowCount > 0) logger.info(`Cleaned ${rowCount} expired refresh token(s)`) })
+      .catch((err) => logger.error(`Token cleanup failed: ${err.message}`))
+  }
+  cleanExpiredTokens()
+  setInterval(cleanExpiredTokens, ONE_HOUR)
 
   // Cowrie log watcher (production only)
   const cowrieLog = process.env.COWRIE_LOG_PATH || '/var/log/cowrie/cowrie.json'

@@ -24,6 +24,8 @@ const scanSchema = z.object({
   url: z.string().url().max(500)
 })
 
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 // POST /api/v1/public/scan — scan OWASP public (sans auth)
 router.post('/scan', publicScanLimiter, async (req, res, next) => {
   try {
@@ -66,8 +68,11 @@ router.post('/scan', publicScanLimiter, async (req, res, next) => {
 })
 
 // GET /api/v1/public/scan/:id — consulter un rapport public
-router.get('/scan/:id', async (req, res, next) => {
+router.get('/scan/:id', publicScanLimiter, async (req, res, next) => {
   try {
+    if (!uuidRegex.test(req.params.id)) {
+      throw new AppError(400, 'INVALID_ID', 'Identifiant invalide')
+    }
     const { rows } = await pool.query(
       'SELECT * FROM audits.scans WHERE id = $1 AND client_id IS NULL',
       [req.params.id]

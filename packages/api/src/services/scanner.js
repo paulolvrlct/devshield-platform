@@ -1,11 +1,47 @@
 import https from 'node:https'
 import http from 'node:http'
 import tls from 'node:tls'
+import dns from 'node:dns/promises'
 import { URL } from 'node:url'
 
 import { logger } from '../utils/logger.js'
 
 const TIMEOUT = Number(process.env.SCAN_TIMEOUT_MS) || 30000
+
+// Anti-SSRF: block private/internal IPs to prevent scanning the internal network
+const BLOCKED_RANGES = [
+  /^127\./,                    // loopback
+  /^10\./,                     // private class A
+  /^172\.(1[6-9]|2\d|3[01])\./, // private class B
+  /^192\.168\./,               // private class C
+  /^169\.254\./,               // link-local
+  /^0\./,                      // current network
+  /^::1$/,                     // IPv6 loopback
+  /^fd/i,                      // IPv6 unique local
+  /^fe80/i                     // IPv6 link-local
+]
+
+const isPrivateIp = (ip) => BLOCKED_RANGES.some((r) => r.test(ip))
+
+const validateHostname = async (hostname) => {
+  // Block internal Docker hostnames
+  const blocked = ['localhost', 'api', 'frontend', 'postgres', 'caddy', 'cowrie']
+  if (blocked.includes(hostname.toLowerCase())) {
+    throw new Error('Adresse interne non autorisée')
+  }
+  // Resolve DNS and check if IP is private
+  try {
+    const addresses = await dns.resolve4(hostname)
+    for (const ip of addresses) {
+      if (isPrivateIp(ip)) {
+        throw new Error('Adresse interne non autorisée')
+      }
+    }
+  } catch (err) {
+    if (err.message === 'Adresse interne non autorisée') throw err
+    // DNS resolution failed — let the scan proceed (it will timeout)
+  }
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────
 
@@ -321,6 +357,9 @@ export const scanUrl = async (url) => {
     const parsed = new URL(url)
     const hostname = parsed.hostname
     const httpsUrl = url.startsWith('https') ? url : `https://${hostname}`
+
+    // Anti-SSRF: reject internal/private targets
+    await validateHostname(hostname)
 
     logger.info(`Starting scan for ${hostname}`)
 

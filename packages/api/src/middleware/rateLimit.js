@@ -23,6 +23,15 @@ export const authLimiter = rateLimit({
   message: limitResponse('Trop de tentatives de connexion, réessayez plus tard')
 })
 
+// Limite sur les soumissions onboarding : 5 / heure / IP (anti-spam).
+export const onboardingLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: limitResponse('Trop de soumissions, réessayez plus tard')
+})
+
 // Limite stricte sur les scans OWASP : 10 scans / minute / IP.
 export const scanLimiter = rateLimit({
   windowMs: 60 * 1000,

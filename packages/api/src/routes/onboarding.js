@@ -6,6 +6,7 @@ import { validate } from '../middleware/validate.js'
 import { requireAuth } from '../middleware/auth.js'
 import { AppError } from '../utils/errors.js'
 import { logger } from '../utils/logger.js'
+import { onboardingLimiter } from '../middleware/rateLimit.js'
 
 const router = Router()
 
@@ -36,7 +37,7 @@ const statusSchema = z.object({
 // curl -X POST http://localhost:3000/api/v1/onboarding \
 //   -H "Content-Type: application/json" \
 //   -d '{"companyName":"Boulangerie Martin","contactName":"Jean Martin","email":"jean@martin.fr","pack":"essentiel"}'
-router.post('/', validate(submissionSchema), async (req, res, next) => {
+router.post('/', onboardingLimiter, validate(submissionSchema), async (req, res, next) => {
   try {
     const {
       companyName, contactName, email, phone, websiteUrl,
