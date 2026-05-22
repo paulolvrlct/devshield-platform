@@ -7,6 +7,7 @@ import { requireAuth } from '../middleware/auth.js'
 import { AppError } from '../utils/errors.js'
 import { logger } from '../utils/logger.js'
 import { onboardingLimiter } from '../middleware/rateLimit.js'
+import { sendNewSubmissionEmail } from '../services/mailer.js'
 
 const router = Router()
 
@@ -58,6 +59,10 @@ router.post('/', onboardingLimiter, validate(submissionSchema), async (req, res,
     )
 
     logger.info(`New onboarding submission: ${rows[0].id}`)
+
+    // Send email notification (non-blocking)
+    sendNewSubmissionEmail(req.body)
+
     res.status(201).json({
       success: true,
       data: { id: rows[0].id, createdAt: rows[0].created_at },
