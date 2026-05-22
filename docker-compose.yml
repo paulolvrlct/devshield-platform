@@ -52,9 +52,6 @@ services:
   frontend:
     build: ./packages/frontend
     restart: unless-stopped
-    volumes:
-      - ./packages/frontend/src:/app/src:ro
-      - ./packages/frontend/index.html:/app/index.html:ro
 
   caddy:
     image: caddy:2-alpine
@@ -71,7 +68,14 @@ services:
       - api
       - frontend
 
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    restart: unless-stopped
+    volumes:
+      - uptime-kuma-data:/app/data
+
 volumes:
   postgres-data:
   caddy-data:
   caddy-config:
+  uptime-kuma-data:

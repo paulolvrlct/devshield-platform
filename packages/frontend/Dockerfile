@@ -1,7 +1,13 @@
-FROM node:20-alpine
+# Stage 1: Build
+FROM node:20-alpine AS build
 WORKDIR /app
-COPY package.json ./
+COPY package.json package-lock.json* ./
 RUN npm install
-COPY vite.config.js tailwind.config.js postcss.config.js ./
+COPY . .
+RUN npm run build
+
+# Stage 2: Serve static files
+FROM caddy:2-alpine
+COPY --from=build /app/dist /srv
+COPY Caddyfile.frontend /etc/caddy/Caddyfile
 EXPOSE 5173
-CMD ["npm", "run", "dev", "--", "--host"]
