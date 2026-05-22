@@ -1,6 +1,20 @@
-# Caddyfile — développement local (HTTP, pas de Let's Encrypt)
-# La configuration de production (sous-domaines + HTTPS auto) sera ajoutée au déploiement.
-clients.devshield.fr {
+# Caddyfile — DevShield Platform
+# All subdomains with security headers
+
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		X-XSS-Protection "1; mode=block"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+		-Server
+		-X-Powered-By
+	}
+}
+
+(common_proxy) {
 	encode gzip
 
 	handle /api/* {
@@ -10,4 +24,47 @@ clients.devshield.fr {
 	handle {
 		reverse_proxy frontend:5173
 	}
+}
+
+# Main client dashboard
+clients.devshield.fr {
+	import security_headers
+	header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+	import common_proxy
+}
+
+# Invoices
+factures.devshield.fr {
+	import security_headers
+	header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+	import common_proxy
+}
+
+# OWASP Scanner (public)
+audit.devshield.fr {
+	import security_headers
+	header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+	# Redirect root to /scan for public access
+	redir / /scan 302
+
+	import common_proxy
+}
+
+# Onboarding form (public)
+onboard.devshield.fr {
+	import security_headers
+	header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+	# Redirect root to /onboarding for public access
+	redir / /onboarding 302
+
+	import common_proxy
+}
+
+# Honeypot dashboard
+honeypot.devshield.fr {
+	import security_headers
+	header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org; font-src 'self'; connect-src 'self' wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+	import common_proxy
 }
