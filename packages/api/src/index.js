@@ -16,6 +16,7 @@ import invoicesRouter from './routes/invoices.js'
 import dashboardRouter from './routes/dashboard.js'
 import auditsRouter from './routes/audits.js'
 import honeypotRouter from './routes/honeypot.js'
+import publicRouter from './routes/public.js'
 import { runAllChecks } from './services/monitor.js'
 import { setSocketIo, watchLogFile } from './services/cowrie.js'
 
@@ -50,6 +51,7 @@ app.use('/api/v1/invoices', invoicesRouter)
 app.use('/api/v1/dashboard', dashboardRouter)
 app.use('/api/v1/audits', auditsRouter)
 app.use('/api/v1/honeypot', honeypotRouter)
+app.use('/api/v1/public', publicRouter)
 
 app.use(notFound)
 app.use(errorHandler)

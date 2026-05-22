@@ -10,6 +10,7 @@ import ClientsPage from './pages/Clients/index.jsx'
 import InvoicesPage from './pages/Invoices/index.jsx'
 import AuditPage from './pages/Audit/index.jsx'
 import HoneypotPage from './pages/Honeypot/index.jsx'
+import PublicScan from './pages/PublicScan.jsx'
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       {/* Route publique — formulaire d'onboarding */}
       <Route path="/onboarding" element={<OnboardingForm />} />
+      <Route path="/scan" element={<PublicScan />} />
       {/* Routes protégées (admin) */}
       <Route
         path="/"
