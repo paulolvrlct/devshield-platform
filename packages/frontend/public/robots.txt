@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /onboarding
+Allow: /scan
+Disallow: /login
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://onboard.devshield.fr/sitemap.xml
+Sitemap: https://audit.devshield.fr/sitemap.xml

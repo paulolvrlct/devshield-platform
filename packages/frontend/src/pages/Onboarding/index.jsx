@@ -5,6 +5,7 @@ import Button from '../../components/Button.jsx'
 import Input from '../../components/Input.jsx'
 import { api } from '../../api/client.js'
 import logoIcon from '../../assets/logo-icon.png'
+import useDocumentTitle from '../../hooks/useDocumentTitle.js'
 
 const STEPS = [
   { title: 'Votre entreprise', subtitle: 'Informations de contact' },
@@ -21,6 +22,7 @@ const INITIAL = {
 }
 
 export default function OnboardingForm() {
+  useDocumentTitle('Formulaire de prise en charge')
   const [step, setStep] = useState(0)
   const [form, setForm] = useState(INITIAL)
   const [error, setError] = useState('')

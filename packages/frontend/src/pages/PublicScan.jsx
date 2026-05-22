@@ -4,6 +4,7 @@ import Card from '../components/Card.jsx'
 import Button from '../components/Button.jsx'
 import logoIcon from '../assets/logo-icon.png'
 import { api } from '../api/client.js'
+import useDocumentTitle from '../hooks/useDocumentTitle.js'
 
 const gradeColors = {
   A: 'text-emerald-500 dark:text-green-400 border-emerald-400 dark:border-green-400',
@@ -30,6 +31,7 @@ const categoryLabels = {
 }
 
 export default function PublicScan() {
+  useDocumentTitle('Scanner OWASP gratuit')
   const [url, setUrl] = useState('')
   const [scanning, setScanning] = useState(false)
   const [error, setError] = useState(null)
