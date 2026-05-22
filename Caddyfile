@@ -31,17 +31,25 @@
 	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' ; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 }
 
-# Main client dashboard
+# Main client dashboard (VPN only)
 clients.devshield.fr {
 	import security_headers
 	import csp_base
+
+	@blocked not remote_ip 10.0.0.0/24
+	respond @blocked 403
+
 	import common_proxy
 }
 
-# Invoices
+# Invoices (VPN only)
 factures.devshield.fr {
 	import security_headers
 	import csp_base
+
+	@blocked not remote_ip 10.0.0.0/24
+	respond @blocked 403
+
 	import common_proxy
 }
 
@@ -67,15 +75,23 @@ onboard.devshield.fr {
 	import common_proxy
 }
 
-# Honeypot dashboard (also needs OpenStreetMap tiles)
+# Honeypot dashboard (VPN only, also needs OpenStreetMap tiles)
 honeypot.devshield.fr {
 	import security_headers
 	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' ; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.tile.openstreetmap.org; font-src 'self' https://fonts.gstatic.com; connect-src 'self' wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+	@blocked not remote_ip 10.0.0.0/24
+	respond @blocked 403
+
 	import common_proxy
 }
 
-# Uptime Kuma monitoring
+# Uptime Kuma monitoring (VPN only)
 status.devshield.fr {
 	import security_headers
+
+	@blocked not remote_ip 10.0.0.0/24
+	respond @blocked 403
+
 	reverse_proxy uptime-kuma:3001
 }
