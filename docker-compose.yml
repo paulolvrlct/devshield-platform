@@ -39,6 +39,12 @@ services:
       SMTP_FROM: ${SMTP_FROM}
     volumes:
       - ./packages/api/src:/app/src:ro
+    extra_hosts:
+      - "clients.devshield.fr:host-gateway"
+      - "factures.devshield.fr:host-gateway"
+      - "audit.devshield.fr:host-gateway"
+      - "onboard.devshield.fr:host-gateway"
+      - "honeypot.devshield.fr:host-gateway"
     depends_on:
       postgres:
         condition: service_healthy
