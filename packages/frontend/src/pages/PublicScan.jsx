@@ -1,9 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Card from '../components/Card.jsx'
 import Button from '../components/Button.jsx'
 import logoIcon from '../assets/logo-icon.png'
 import { api } from '../api/client.js'
+
+// Force light mode on public pages
+const useLightMode = () => {
+  useEffect(() => {
+    const html = document.documentElement
+    const wasDark = html.classList.contains('dark')
+    html.classList.remove('dark')
+    return () => { if (wasDark) html.classList.add('dark') }
+  }, [])
+}
 
 const gradeColors = {
   A: 'text-emerald-500 dark:text-green-400 border-emerald-400 dark:border-green-400',
@@ -30,6 +40,7 @@ const categoryLabels = {
 }
 
 export default function PublicScan() {
+  useLightMode()
   const [url, setUrl] = useState('')
   const [scanning, setScanning] = useState(false)
   const [error, setError] = useState(null)
@@ -67,14 +78,22 @@ export default function PublicScan() {
 
       <div className="relative z-10 mx-auto max-w-3xl">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
-          <img src={logoIcon} alt="DevShield" className="h-10 w-10" />
-          <div>
-            <h1 className="text-xl font-bold text-slate-800 dark:text-white">
-              Dev<span className="text-brand-500">Shield</span>
-            </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Scanner de sécurité OWASP</p>
-          </div>
+        <div className="flex items-center justify-between mb-8">
+          <a href="https://devshield.fr" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <img src={logoIcon} alt="DevShield" className="h-10 w-10" />
+            <div>
+              <h1 className="text-xl font-bold text-slate-800">
+                Dev<span className="text-brand-500">Shield</span>
+              </h1>
+              <p className="text-sm text-slate-500">Scanner de sécurité OWASP</p>
+            </div>
+          </a>
+          <a
+            href="https://devshield.fr"
+            className="text-sm text-brand-500 hover:text-brand-600 hover:underline transition-colors"
+          >
+            ← Retour au site
+          </a>
         </div>
 
         {/* Scan form */}

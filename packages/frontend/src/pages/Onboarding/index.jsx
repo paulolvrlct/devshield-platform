@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import Card from '../../components/Card.jsx'
 import Button from '../../components/Button.jsx'
@@ -20,7 +20,18 @@ const INITIAL = {
   content: '', notes: ''
 }
 
+// Force light mode on public pages
+const useLightMode = () => {
+  useEffect(() => {
+    const html = document.documentElement
+    const wasDark = html.classList.contains('dark')
+    html.classList.remove('dark')
+    return () => { if (wasDark) html.classList.add('dark') }
+  }, [])
+}
+
 export default function OnboardingForm() {
+  useLightMode()
   const [step, setStep] = useState(0)
   const [form, setForm] = useState(INITIAL)
   const [error, setError] = useState('')
@@ -68,10 +79,16 @@ export default function OnboardingForm() {
         <Card className="relative z-10 w-full max-w-lg p-8 text-center">
           <div className="text-4xl mb-4">✓</div>
           <h1 className="text-xl font-bold text-brand-500">Demande envoyée !</h1>
-          <p className="mt-2 text-slate-500 dark:text-slate-400">
+          <p className="mt-2 text-slate-500">
             Merci pour votre confiance. Nous reviendrons vers vous sous 48h
-            à l'adresse <span className="text-slate-800 dark:text-white">{form.email}</span>.
+            à l'adresse <span className="text-slate-800">{form.email}</span>.
           </p>
+          <a
+            href="https://devshield.fr"
+            className="inline-block mt-4 text-sm text-brand-500 hover:text-brand-600 hover:underline transition-colors"
+          >
+            ← Retour sur devshield.fr
+          </a>
         </Card>
       </main>
     )
@@ -85,14 +102,22 @@ export default function OnboardingForm() {
         <div className="blob blob-3" />
       </div>
       <Card className="relative z-10 w-full max-w-lg p-8">
-        <div className="flex items-center gap-3">
-          <img src={logoIcon} alt="DevShield" className="h-10 w-10" />
-          <div>
-            <h1 className="text-xl font-bold text-slate-800 dark:text-white">
-              Dev<span className="text-brand-500">Shield</span>
-            </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Formulaire de prise en charge</p>
-          </div>
+        <div className="flex items-center justify-between">
+          <a href="https://devshield.fr" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <img src={logoIcon} alt="DevShield" className="h-10 w-10" />
+            <div>
+              <h1 className="text-xl font-bold text-slate-800">
+                Dev<span className="text-brand-500">Shield</span>
+              </h1>
+              <p className="text-sm text-slate-500">Formulaire de prise en charge</p>
+            </div>
+          </a>
+          <a
+            href="https://devshield.fr"
+            className="text-sm text-brand-500 hover:text-brand-600 hover:underline transition-colors"
+          >
+            ← Retour au site
+          </a>
         </div>
 
         {/* Progress bar */}
