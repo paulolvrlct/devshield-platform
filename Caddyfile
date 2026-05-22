@@ -26,24 +26,29 @@
 	}
 }
 
+# Shared CSP (Vite dev mode needs unsafe-inline + unsafe-eval, Google Fonts external)
+(csp_base) {
+	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+}
+
 # Main client dashboard
 clients.devshield.fr {
 	import security_headers
-	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+	import csp_base
 	import common_proxy
 }
 
 # Invoices
 factures.devshield.fr {
 	import security_headers
-	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+	import csp_base
 	import common_proxy
 }
 
 # OWASP Scanner (public)
 audit.devshield.fr {
 	import security_headers
-	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+	import csp_base
 
 	# Redirect root to /scan for public access
 	redir / /scan 302
@@ -54,7 +59,7 @@ audit.devshield.fr {
 # Onboarding form (public)
 onboard.devshield.fr {
 	import security_headers
-	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+	import csp_base
 
 	# Redirect root to /onboarding for public access
 	redir / /onboarding 302
@@ -62,9 +67,9 @@ onboard.devshield.fr {
 	import common_proxy
 }
 
-# Honeypot dashboard
+# Honeypot dashboard (also needs OpenStreetMap tiles)
 honeypot.devshield.fr {
 	import security_headers
-	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org; font-src 'self'; connect-src 'self' wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.tile.openstreetmap.org; font-src 'self' https://fonts.gstatic.com; connect-src 'self' wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 	import common_proxy
 }
