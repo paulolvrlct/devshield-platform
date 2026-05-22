@@ -2,7 +2,7 @@
 
 Plateforme interne [DevShield](https://devshield.fr) pour la gestion de clients, la facturation, l'audit de sécurité OWASP, l'onboarding et la supervision d'un honeypot SSH.
 
-Hebergée sur un VPS Hetzner CX22 (Debian 12), conçue pour les artisans et PME.
+Hebergée sur un VPS chez OVH (Debian 12), conçue pour les artisans et PME.
 
 ## Stack technique
 
