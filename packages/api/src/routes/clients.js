@@ -110,4 +110,29 @@ router.put('/:id', validate(clientSchema), async (req, res, next) => {
   }
 })
 
+// DELETE /api/v1/clients/:id — supprime un client (si aucune facture liée)
+// curl -X DELETE http://localhost:3000/api/v1/clients/UUID -b "accessToken=..."
+router.delete('/:id', async (req, res, next) => {
+  try {
+    // Check for linked invoices (FK RESTRICT)
+    const { rows: invoiceRows } = await pool.query(
+      'SELECT COUNT(*) FROM invoices.invoices WHERE client_id = $1',
+      [req.params.id]
+    )
+    if (Number(invoiceRows[0].count) > 0) {
+      throw new AppError(409, 'CONFLICT', 'Impossible de supprimer ce client : des factures y sont liées. Supprimez-les d\'abord.')
+    }
+
+    const { rows } = await pool.query(
+      'DELETE FROM clients.clients WHERE id = $1 RETURNING id',
+      [req.params.id]
+    )
+    if (!rows.length) throw new AppError(404, 'NOT_FOUND', 'Client introuvable')
+
+    res.json({ success: true, message: 'Client supprimé' })
+  } catch (err) {
+    next(err)
+  }
+})
+
 export default router

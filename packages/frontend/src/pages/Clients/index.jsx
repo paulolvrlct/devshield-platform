@@ -34,6 +34,7 @@ export default function Clients() {
         client={editing === 'new' ? null : editing}
         onSaved={() => { setEditing(null); load() }}
         onCancel={() => setEditing(null)}
+        onDeleted={() => { setEditing(null); load() }}
       />
     )
   }
@@ -87,7 +88,7 @@ export default function Clients() {
   )
 }
 
-function ClientForm({ client, onSaved, onCancel }) {
+function ClientForm({ client, onSaved, onCancel, onDeleted }) {
   const isNew = !client
   const [form, setForm] = useState({
     companyName: client?.company_name || '',
@@ -101,6 +102,8 @@ function ClientForm({ client, onSaved, onCancel }) {
   })
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const set = (field) => (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }))
 
@@ -150,10 +153,56 @@ function ClientForm({ client, onSaved, onCancel }) {
           {error && (
             <p className="rounded-xl border border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-300">{error}</p>
           )}
-          <Button type="submit" variant="primary" disabled={submitting}>
-            {submitting ? 'Enregistrement…' : (isNew ? 'Créer le client' : 'Enregistrer')}
-          </Button>
+          <div className="flex items-center justify-between">
+            <Button type="submit" variant="primary" disabled={submitting}>
+              {submitting ? 'Enregistrement…' : (isNew ? 'Créer le client' : 'Enregistrer')}
+            </Button>
+            {!isNew && !confirmDelete && (
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(true)}
+                className="text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+              >
+                Supprimer
+              </button>
+            )}
+          </div>
         </form>
+
+        {!isNew && confirmDelete && (
+          <div className="mt-4 rounded-xl border border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 p-4">
+            <p className="text-sm text-red-600 dark:text-red-300 mb-3">
+              Supprimer définitivement <strong>{client.company_name}</strong> ?
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => setConfirmDelete(false)}
+                disabled={deleting}
+              >
+                Annuler
+              </Button>
+              <button
+                onClick={async () => {
+                  setDeleting(true)
+                  setError('')
+                  try {
+                    await api.delete(`/clients/${client.id}`)
+                    onDeleted()
+                  } catch (err) {
+                    setError(err.message)
+                    setDeleting(false)
+                    setConfirmDelete(false)
+                  }
+                }}
+                disabled={deleting}
+                className="rounded-xl bg-red-500 hover:bg-red-600 text-white px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+              >
+                {deleting ? 'Suppression…' : 'Confirmer la suppression'}
+              </button>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   )

@@ -62,6 +62,11 @@ export default function Submissions() {
         submission={selected}
         onBack={() => setSelected(null)}
         onStatusChange={updateStatus}
+        onDelete={async (id) => {
+          await api.delete(`/onboarding/${id}`)
+          setSelected(null)
+          load(filter)
+        }}
         formatDate={formatDate}
       />
     )
@@ -146,7 +151,11 @@ function FilterButton({ label, active, onClick }) {
   )
 }
 
-function SubmissionDetail({ submission: sub, onBack, onStatusChange, formatDate }) {
+function SubmissionDetail({ submission: sub, onBack, onStatusChange, onDelete, formatDate }) {
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+
   const fields = [
     ['Entreprise', sub.company_name], ['Contact', sub.contact_name],
     ['Email', sub.email], ['Téléphone', sub.phone || '—'],
@@ -188,25 +197,68 @@ function SubmissionDetail({ submission: sub, onBack, onStatusChange, formatDate 
           </div>
         )}
 
-        <div>
-          <span className="text-xs text-slate-400 dark:text-slate-500 block mb-2">Changer le statut</span>
-          <div className="flex gap-2">
-            {STATUS_OPTIONS.map((s) => (
-              <button
-                key={s}
-                onClick={() => onStatusChange(sub.id, s)}
-                disabled={sub.status === s}
-                className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all ${
-                  sub.status === s
-                    ? 'border-brand-400 dark:border-brand-500/50 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400'
-                    : 'glass-input text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-white/20'
-                }`}
-              >
-                {STATUS_LABELS[s].label}
-              </button>
-            ))}
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-xs text-slate-400 dark:text-slate-500 block mb-2">Changer le statut</span>
+            <div className="flex gap-2">
+              {STATUS_OPTIONS.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => onStatusChange(sub.id, s)}
+                  disabled={sub.status === s}
+                  className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all ${
+                    sub.status === s
+                      ? 'border-brand-400 dark:border-brand-500/50 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400'
+                      : 'glass-input text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-white/20'
+                  }`}
+                >
+                  {STATUS_LABELS[s].label}
+                </button>
+              ))}
+            </div>
           </div>
+          {!confirmDelete && (
+            <button
+              onClick={() => setConfirmDelete(true)}
+              className="text-sm text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+            >
+              Supprimer
+            </button>
+          )}
         </div>
+
+        {confirmDelete && (
+          <div className="mt-4 rounded-xl border border-red-300 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 p-4">
+            <p className="text-sm text-red-600 dark:text-red-300 mb-3">
+              Supprimer définitivement la soumission de <strong>{sub.company_name}</strong> ?
+            </p>
+            {deleteError && (
+              <p className="text-sm text-red-600 dark:text-red-300 mb-2">{deleteError}</p>
+            )}
+            <div className="flex gap-2">
+              <Button variant="ghost" onClick={() => setConfirmDelete(false)} disabled={deleting}>
+                Annuler
+              </Button>
+              <button
+                onClick={async () => {
+                  setDeleting(true)
+                  setDeleteError('')
+                  try {
+                    await onDelete(sub.id)
+                  } catch (err) {
+                    setDeleteError(err.message)
+                    setDeleting(false)
+                    setConfirmDelete(false)
+                  }
+                }}
+                disabled={deleting}
+                className="rounded-xl bg-red-500 hover:bg-red-600 text-white px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50"
+              >
+                {deleting ? 'Suppression…' : 'Confirmer la suppression'}
+              </button>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   )

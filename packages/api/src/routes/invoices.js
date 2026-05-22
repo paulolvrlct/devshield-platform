@@ -185,4 +185,20 @@ router.get('/:id/pdf', async (req, res, next) => {
   }
 })
 
+// DELETE /api/v1/invoices/:id — supprime un devis/facture
+// curl -X DELETE http://localhost:3000/api/v1/invoices/UUID -b "accessToken=..."
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { rows } = await pool.query(
+      'DELETE FROM invoices.invoices WHERE id = $1 RETURNING id',
+      [req.params.id]
+    )
+    if (!rows.length) throw new AppError(404, 'NOT_FOUND', 'Document introuvable')
+
+    res.json({ success: true, message: 'Document supprimé' })
+  } catch (err) {
+    next(err)
+  }
+})
+
 export default router

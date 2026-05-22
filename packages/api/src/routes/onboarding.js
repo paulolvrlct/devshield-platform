@@ -174,4 +174,24 @@ router.patch('/:id/status', requireAuth, validate(statusSchema), async (req, res
   }
 })
 
+// DELETE /api/v1/onboarding/:id — admin uniquement, supprime une soumission
+// curl -X DELETE http://localhost:3000/api/v1/onboarding/UUID -b "accessToken=..."
+router.delete('/:id', requireAuth, async (req, res, next) => {
+  try {
+    if (req.user.role !== 'admin') {
+      throw new AppError(403, 'FORBIDDEN', 'Accès réservé aux administrateurs')
+    }
+
+    const { rows } = await pool.query(
+      'DELETE FROM onboarding.submissions WHERE id = $1 RETURNING id',
+      [req.params.id]
+    )
+    if (!rows.length) throw new AppError(404, 'NOT_FOUND', 'Soumission introuvable')
+
+    res.json({ success: true, message: 'Soumission supprimée' })
+  } catch (err) {
+    next(err)
+  }
+})
+
 export default router
