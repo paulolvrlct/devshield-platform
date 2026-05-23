@@ -153,6 +153,14 @@ export default function OnboardingForm() {
           )}
         </div>
       </Card>
+      <div className="relative z-10 text-center text-xs text-slate-400 dark:text-slate-500 mt-6 space-y-1">
+        <p>DevShield — Web & Cybersécurité</p>
+        <p>
+          <a href="https://devshield.fr/mentions-legales" target="_blank" rel="noopener noreferrer" className="hover:text-brand-500 transition-colors">Mentions légales</a>
+          {' · '}
+          <a href="https://devshield.fr/cgv" target="_blank" rel="noopener noreferrer" className="hover:text-brand-500 transition-colors">CGV</a>
+        </p>
+      </div>
     </main>
   )
 }

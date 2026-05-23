@@ -233,9 +233,14 @@ export default function PublicScan() {
         )}
 
         {/* Footer */}
-        <p className="text-center text-xs text-slate-400 dark:text-slate-500 mt-8">
-          DevShield — Web & Cybersécurité
-        </p>
+        <div className="text-center text-xs text-slate-400 dark:text-slate-500 mt-8 space-y-1">
+          <p>DevShield — Web & Cybersécurité</p>
+          <p>
+            <a href="https://devshield.fr/mentions-legales" target="_blank" rel="noopener noreferrer" className="hover:text-brand-500 transition-colors">Mentions légales</a>
+            {' · '}
+            <a href="https://devshield.fr/cgv" target="_blank" rel="noopener noreferrer" className="hover:text-brand-500 transition-colors">CGV</a>
+          </p>
+        </div>
       </div>
     </main>
   )
