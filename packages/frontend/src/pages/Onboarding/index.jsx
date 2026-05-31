@@ -16,7 +16,7 @@ const STEPS = [
 
 const INITIAL = {
   companyName: '', contactName: '', email: '', phone: '',
-  websiteUrl: '', activity: '', pack: 'essentiel', pages: '',
+  websiteUrl: '', activity: '', pack: 'landing', pages: '',
   primaryColor: '#0ea5e9', secondaryColor: '#0f172a',
   content: '', notes: ''
 }
@@ -186,15 +186,15 @@ function Step2({ form, set }) {
       <div>
         <label className="mb-1 block text-sm text-slate-600 dark:text-slate-400">Pack souhaité *</label>
         <div className="flex gap-3">
-          {['essentiel', 'optimal'].map((p) => (
+          {[['landing', '399 €'], ['essentiel', '700 €'], ['optimal', '850 €']].map(([p, price]) => (
             <button key={p} type="button" onClick={() => set('pack')(p)}
               className={`flex-1 rounded-xl border px-4 py-3 text-sm transition-all ${
                 form.pack === p
                   ? 'border-brand-400 dark:border-brand-500/50 bg-brand-50 dark:bg-brand-500/10 text-brand-600 dark:text-brand-400'
                   : 'glass-input text-slate-500 dark:text-slate-400'
               }`}>
-              <span className="font-medium capitalize">{p}</span>
-              <span className="block text-xs mt-1 opacity-70">{p === 'essentiel' ? '700 €' : '850 €'}</span>
+              <span className="font-medium capitalize">{p === 'landing' ? 'Landing Page' : p}</span>
+              <span className="block text-xs mt-1 opacity-70">{price}</span>
             </button>
           ))}
         </div>
@@ -251,7 +251,7 @@ function Step4({ form }) {
     ['Entreprise', form.companyName], ['Contact', form.contactName],
     ['Email', form.email], ['Téléphone', form.phone || '—'],
     ['Site actuel', form.websiteUrl || '—'], ['Activité', form.activity || '—'],
-    ['Pack', form.pack === 'essentiel' ? 'Essentiel (700 €)' : 'Optimal (850 €)'],
+    ['Pack', form.pack === 'landing' ? 'Landing Page (399 €)' : form.pack === 'essentiel' ? 'Essentiel (700 €)' : 'Optimal (850 €)'],
     ['Pages', form.pages || '—']
   ]
 
