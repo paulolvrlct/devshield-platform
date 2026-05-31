@@ -2,7 +2,7 @@
 
 Plateforme interne [DevShield](https://devshield.fr) pour la gestion de clients, la facturation, l'audit de sécurité OWASP, l'onboarding et la supervision d'un honeypot SSH.
 
-Hebergée sur un VPS chez OVH (Debian 12), conçue pour les artisans et PME.
+Hebergée sur un VPS OVH (Debian 12), sécurisée par WireGuard VPN, conçue pour les artisans et PME.
 
 ## Stack technique
 
@@ -27,7 +27,7 @@ Hebergée sur un VPS chez OVH (Debian 12), conçue pour les artisans et PME.
 
 ### 3. Gestion clients et facturation
 - CRUD clients avec recherche
-- Création de devis et factures avec packs prédéfinis (Essentiel / Optimal)
+- Création de devis et factures avec packs prédéfinis (Landing Page / Essentiel / Optimal)
 - Numérotation automatique (YYYY-NNN)
 - Génération de PDF brandés DevShield avec mentions légales
 - Gestion des statuts (brouillon, envoyée, payée, annulée)
@@ -60,15 +60,92 @@ Hebergée sur un VPS chez OVH (Debian 12), conçue pour les artisans et PME.
 
 ## Architecture
 
+```mermaid
+graph TB
+    subgraph Internet["Internet"]
+        U["Utilisateur"]
+        LE["Let's Encrypt"]
+        CF["Cloudflare DNS"]
+    end
+
+    subgraph VPS["VPS OVH — Debian 12 — Docker Compose"]
+        subgraph Reverse["Reverse Proxy"]
+            CADDY["Caddy\nHTTPS auto\nSecurity Headers\nVPN IP Filter"]
+        end
+
+        subgraph Apps["Applications"]
+            API["API REST\nNode.js 20\nExpress + Socket.io"]
+            FRONT["Frontend\nReact 18 + Tailwind\nCaddy static serve"]
+            KUMA["Uptime Kuma\nMonitoring"]
+        end
+
+        subgraph Data["Stockage"]
+            PG[("PostgreSQL 16\n6 schemas")]
+        end
+    end
+
+    subgraph VPN["WireGuard VPN"]
+        ADMIN["Admin\n10.0.0.2"]
+    end
+
+    U -- "audit.devshield.fr\nonboard.devshield.fr" --> CF
+    CF --> CADDY
+    CADDY -- "/api/*" --> API
+    CADDY -- "/*" --> FRONT
+    CADDY -- "status.*" --> KUMA
+    API --> PG
+    LE -. "ACME HTTP-01" .-> CADDY
+
+    ADMIN -- "clients.devshield.fr\nfactures.devshield.fr\nhoneypot.devshield.fr\nstatus.devshield.fr" --> CADDY
+
+    style Internet fill:#1e293b,stroke:#0ea5e9,color:#e2e8f0
+    style VPS fill:#0f172a,stroke:#0ea5e9,color:#e2e8f0
+    style Reverse fill:#0a2540,stroke:#00d4ff,color:#e2e8f0
+    style Apps fill:#0a2540,stroke:#00d4ff,color:#e2e8f0
+    style Data fill:#0a2540,stroke:#00d4ff,color:#e2e8f0
+    style VPN fill:#0a2540,stroke:#22c55e,color:#e2e8f0
+    style CADDY fill:#0ea5e9,stroke:#0284c7,color:#fff
+    style API fill:#22c55e,stroke:#16a34a,color:#fff
+    style FRONT fill:#8b5cf6,stroke:#7c3aed,color:#fff
+    style PG fill:#f59e0b,stroke:#d97706,color:#fff
+    style KUMA fill:#6366f1,stroke:#4f46e5,color:#fff
+    style ADMIN fill:#22c55e,stroke:#16a34a,color:#fff
+    style U fill:#64748b,stroke:#475569,color:#fff
+    style CF fill:#f97316,stroke:#ea580c,color:#fff
+    style LE fill:#ef4444,stroke:#dc2626,color:#fff
 ```
-VPS Hetzner CX22 (2 vCPU, 4 Go RAM, Debian 12)
-├── Docker Compose
-├── Caddy (reverse proxy, HTTPS auto Let's Encrypt)
-├── PostgreSQL 16 (schemas : auth, clients, invoices, audits, onboarding, honeypot)
-├── packages/api         API REST Node.js (Express + Socket.io)
-├── packages/frontend    React + Tailwind + React Router
-├── cowrie/              Honeypot SSH (container dédié)
-└── backups/             Sauvegardes automatisées
+
+### Sous-domaines
+
+| Sous-domaine | Accès | Description |
+|---|---|---|
+| `clients.devshield.fr` | VPN only | Dashboard admin, clients, factures, honeypot |
+| `factures.devshield.fr` | VPN only | Redirection facturation |
+| `honeypot.devshield.fr` | VPN only | Dashboard honeypot SSH |
+| `status.devshield.fr` | VPN only | Uptime Kuma monitoring |
+| `audit.devshield.fr` | Public | Scanner OWASP gratuit |
+| `onboard.devshield.fr` | Public | Formulaire de prise en charge |
+
+```mermaid
+graph LR
+    subgraph Public["Pages publiques"]
+        SCAN["Scanner OWASP\naudit.devshield.fr/scan"]
+        FORM["Formulaire projet\nonboard.devshield.fr/onboarding"]
+    end
+
+    subgraph Private["Intranet VPN"]
+        DASH["Dashboard Admin\nclients, monitoring,\nfactures, interventions"]
+        HONEY["Honeypot SSH\ncarte mondiale,\nstats temps réel"]
+        STATUS["Uptime Kuma\nsurveillance uptime"]
+    end
+
+    style Public fill:#0f172a,stroke:#0ea5e9,color:#e2e8f0
+    style Private fill:#0f172a,stroke:#22c55e,color:#e2e8f0
+    style SCAN fill:#0ea5e9,stroke:#0284c7,color:#fff
+    style FORM fill:#8b5cf6,stroke:#7c3aed,color:#fff
+    style DASH fill:#22c55e,stroke:#16a34a,color:#fff
+    style HONEY fill:#ef4444,stroke:#dc2626,color:#fff
+    style STATUS fill:#6366f1,stroke:#4f46e5,color:#fff
 ```
 
 ## Structure du monorepo
