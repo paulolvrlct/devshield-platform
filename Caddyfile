@@ -26,6 +26,27 @@
 	}
 }
 
+# VPN-only proxy : blocks any IP outside the WireGuard subnet.
+# The block lives in a handle{} because handle blocks are evaluated
+# in source order (first match wins), unlike top-level respond which
+# Caddy runs AFTER reverse_proxy regardless of file order.
+(common_proxy_vpn) {
+	encode gzip
+
+	@blocked not remote_ip 10.0.0.0/24
+	handle @blocked {
+		respond "Acces reserve au reseau interne (VPN)" 403
+	}
+
+	handle /api/* {
+		reverse_proxy api:3000
+	}
+
+	handle {
+		reverse_proxy frontend:5173
+	}
+}
+
 # Shared CSP (Google Fonts external)
 (csp_base) {
 	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' ; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
@@ -35,22 +56,14 @@
 clients.devshield.fr {
 	import security_headers
 	import csp_base
-
-	@blocked not remote_ip 10.0.0.0/24
-	respond @blocked 403
-
-	import common_proxy
+	import common_proxy_vpn
 }
 
 # Invoices (VPN only)
 factures.devshield.fr {
 	import security_headers
 	import csp_base
-
-	@blocked not remote_ip 10.0.0.0/24
-	respond @blocked 403
-
-	import common_proxy
+	import common_proxy_vpn
 }
 
 # OWASP Scanner (public)
@@ -80,10 +93,7 @@ honeypot.devshield.fr {
 	import security_headers
 	header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' ; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://*.tile.openstreetmap.org; font-src 'self' https://fonts.gstatic.com; connect-src 'self' wss:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
-	@blocked not remote_ip 10.0.0.0/24
-	respond @blocked 403
-
-	import common_proxy
+	import common_proxy_vpn
 }
 
 # Uptime Kuma monitoring (VPN only)
@@ -91,7 +101,11 @@ status.devshield.fr {
 	import security_headers
 
 	@blocked not remote_ip 10.0.0.0/24
-	respond @blocked 403
+	handle @blocked {
+		respond "Acces reserve au reseau interne (VPN)" 403
+	}
 
-	reverse_proxy uptime-kuma:3001
+	handle {
+		reverse_proxy uptime-kuma:3001
+	}
 }
