@@ -85,7 +85,7 @@ graph TB
     end
 
     subgraph VPN["WireGuard VPN"]
-        ADMIN["Admin\nX.X.X.X"]
+        ADMIN["Admin"]
     end
 
     U -- "audit.devshield.fr\nonboard.devshield.fr" --> CF
